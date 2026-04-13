@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Triad</string>
+    <string name="Triad">165998209133-mducanfnbnb3ab9asheo2mkni5vtmopv.apps.googleusercontent.com</string>
+    <!-- Replace with your Facebook App ID -->
+    <string name="facebook_app_id">1355037846471158</string>
+    <!-- Replace with your Facebook Client Token -->
+    <string name="facebook_client_token">50285ac8e45d7e6a24ee8fe5a839225e</string>
+    <!-- Replace with fb + your Facebook App ID (e.g., fb123456789) -->
+    <string name="fb_login_protocol_scheme">fb1355037846471158</string>
+    <!-- Replace with your Google Web Client ID from Firebase Console -->
+    <string name="default_web_client_id">REPLACE_ME</string>
+</resources>

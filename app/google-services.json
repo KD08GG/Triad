@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "165998209133",
+    "project_id": "triad-ec01b",
+    "storage_bucket": "triad-ec01b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165998209133:android:baf5dd706fc54b0bd13764",
+        "android_client_info": {
+          "package_name": "com.example.triad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzH0kdPuiu83y6vrk1Xq-aoTGjbn8zdVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

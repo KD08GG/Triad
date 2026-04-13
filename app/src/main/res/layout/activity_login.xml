@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="#FAFAFA">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aplicación"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#3C4043"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Correo electrónico"
+        android:textColor="#3C4043" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:textColor="#3C4043" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="8dp"
+        android:text="Iniciar Sesión"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#B47E7E"
+        app:cornerRadius="20dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRegister"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Crear cuenta nueva"
+        android:textAllCaps="false"
+        app:cornerRadius="20dp"
+        app:strokeColor="#B47E7E"
+        android:textColor="#B47E7E" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accede de otra forma"
+        android:textColor="#757575"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoogle"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginBottom="8dp"
+        android:text="Google"
+        android:textAllCaps="false"
+        android:textColor="#3C4043"
+        app:backgroundTint="#FFFFFF"
+        app:cornerRadius="20dp"
+        app:iconGravity="textStart"
+        app:iconPadding="12dp"
+        app:strokeColor="#A4A6A9" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFacebook"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="Facebook"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#1877F2"
+        app:cornerRadius="20dp"
+        app:iconGravity="textStart"
+        app:iconPadding="12dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGithub"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="8dp"
+        android:text="GitHub"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#24292E"
+        app:cornerRadius="20dp"
+        app:iconGravity="textStart"
+        app:iconPadding="12dp" />
+
+    <Button
+        android:id="@+id/btnAnonymous"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#2BB47E7E"
+        android:text="Invitado"
+        android:textColor="#3C4043"
+        app:cornerRadius="20dp" />
+</LinearLayout>
