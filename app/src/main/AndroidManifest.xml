@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <!-- Para que BootReceiver se ejecute tras reinicio del teléfono -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -13,6 +21,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Triad">
+
+        <!-- Maps -->
+        <activity android:name=".LockActivity" android:exported="false"/>
+
+        <!-- Api key Maps -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="undefined"/>
 
         <!-- Facebook SDK -->
         <meta-data
@@ -52,8 +68,22 @@
         <!-- Crear tarea personalizada (lanzada desde TasksFragment) -->
         <activity android:name=".CreateTaskActivity" />
 
-        <!-- ELIMINADAS: DashboardActivity, DataUserActivity, TasksActivity, ShopActivity -->
-        <!-- Sus funciones ahora viven en fragments dentro de MainActivity -->
+        <!-- Servicio de rastreo GPS en primer plano -->
+        <service
+            android:name=".RunningTrackerService"
+            android:foregroundServiceType="location"
+            android:exported="false"/>
+
+        <!-- BootReceiver — reanuda el rastreo tras reinicio del teléfono -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

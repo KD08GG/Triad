@@ -61,7 +61,9 @@ class CreateTaskActivity : AppCompatActivity() {
             "recurrent" to recurrent,
             "completed" to false,
             "userId" to userId,
-            "createdAt" to System.currentTimeMillis()
+            "createdAt" to System.currentTimeMillis(),
+            "penalizacion" to (points / 2) // Calcular penalización
+
         )
 
         db.collection("tasks")

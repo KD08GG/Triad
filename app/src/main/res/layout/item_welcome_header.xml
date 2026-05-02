@@ -13,9 +13,9 @@
         android:id="@+id/tvCategoryHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        android:letterSpacing="0.08"
+        android:textSize="11sp"
+        android:fontFamily="@font/poppins_bold"
+        android:letterSpacing="0.12"
         android:textAllCaps="true"/>
 
     <View
@@ -23,7 +23,6 @@
         android:layout_height="1dp"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
-        android:background="@color/divider"
-        android:alpha="0.3"/>
+        android:background="@color/divider"/>
 
 </LinearLayout>

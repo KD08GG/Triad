@@ -51,6 +51,7 @@ class AvatarFragment : Fragment() {
                 .setMessage("Tu progreso está guardado en la nube. Puedes volver cuando quieras.")
                 .setPositiveButton("Cerrar sesión") { _, _ ->
                     Prefs(requireContext()).wipe()
+                    NotificationScheduler.cancelar(requireContext())
                     auth.signOut()
                     startActivity(Intent(requireContext(), LoginActivity::class.java))
                     requireActivity().finish()

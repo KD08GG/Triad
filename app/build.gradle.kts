@@ -64,4 +64,11 @@ dependencies {
     // Biometicos
     implementation("androidx.biometric:biometric:1.1.0")
 
+    // Notificaciones
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
+    // Maps
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
 }

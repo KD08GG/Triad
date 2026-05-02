@@ -1,47 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Fondos principales — blancos y muy claros -->
+    <color name="background">#F8F7FF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_selected">#EEF0FF</color>
+    <color name="divider">#E8E6F0</color>
 
-    <!--
-    <color name="primary">#B47E7E</color>
-    <color name="primary_variant">#8E5A5A</color>
-    <color name="background">#FAFAFA</color>
-     <color name="text_primary">#3C4043</color>
-     <color name="text_secondary">#757575</color>
-    -->
+    <!-- Primarios — lavanda/púrpura suave -->
+    <color name="primary">#7B6FE8</color>
+    <color name="primary_light">#A89EF5</color>
+    <color name="primary_dark">#5A4FCC</color>
+    <color name="primary_surface">#EEF0FF</color>
 
-     <!-- RPG Attributes -->
-    <color name="hp_red">#E57373</color>
-    <color name="mana_blue">#64B5F6</color>
-    <color name="happiness_yellow">#FFF176</color>
-    <color name="energy_orange">#FFB74D</color>
-    <color name="duty_grey">#90A4AE</color>
+    <!-- Acento rosa -->
+    <color name="accent_pink">#F0A8C8</color>
+    <color name="accent_pink_light">#FDE8F2</color>
 
-    <!-- Status States -->
-    <color name="state_green">#81C784</color>
-    <color name="state_yellow">#FFD54F</color>
-    <color name="state_red">#E57373</color>
-
-    <!-- Base de la app -->
-    <color name="background">#0F0F1A</color>
-    <color name="surface">#1A1A2E</color>
-    <color name="surface_selected">#1E1B33</color>
-    <color name="divider">#2A2A45</color>
-
-    <!-- Primarios / acento -->
-    <color name="primary">#7C5CBF</color>
-    <color name="primary_light">#9D7DE0</color>
+    <!-- Acento azul -->
+    <color name="accent_blue">#8EC5FC</color>
+    <color name="accent_blue_light">#E8F4FE</color>
 
     <!-- Texto -->
-    <color name="text_primary">#EEEEF5</color>
-    <color name="text_secondary">#8888AA</color>
+    <color name="text_primary">#2D2B45</color>
+    <color name="text_secondary">#8C8AA8</color>
+    <color name="text_hint">#B8B6CC</color>
+    <color name="white">#FFFFFF</color>
 
-    <!-- Categorías de tareas -->
-    <color name="cat_cuerpo">#E05A6A</color>
-    <color name="cat_alma">#F0B429</color>
-    <color name="cat_espiritu">#7C5CBF</color>
-    <color name="cat_deberes">#3ABFB1</color>
-    <color name="cat_personal">#6BBF85</color>
+    <!-- Categorías de tareas — pastel suave -->
+    <color name="cat_cuerpo">#FF8FAB</color>
+    <color name="cat_cuerpo_bg">#FFF0F3</color>
+    <color name="cat_alma">#F9C74F</color>
+    <color name="cat_alma_bg">#FFFBEC</color>
+    <color name="cat_espiritu">#A89EF5</color>
+    <color name="cat_espiritu_bg">#F3F1FF</color>
+    <color name="cat_deberes">#7FD4B4</color>
+    <color name="cat_deberes_bg">#EDFAF4</color>
+    <color name="cat_personal">#8EC5FC</color>
+    <color name="cat_personal_bg">#EBF5FF</color>
 
+    <!-- Estado danger -->
+    <color name="danger">#FF6B6B</color>
+    <color name="danger_surface">#FFF0F0</color>
+
+    <!-- Bottom nav -->
+    <color name="nav_inactive">#C4C2D8</color>
 </resources>

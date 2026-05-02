@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- Blob decorativo en login                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <gradient
+        android:type="radial"
+        android:gradientRadius="50%"
+        android:startColor="#C9C0FF"
+        android:endColor="#F8B4D9"/>
+</shape>

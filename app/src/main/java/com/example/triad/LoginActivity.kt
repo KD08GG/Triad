@@ -67,14 +67,14 @@ class LoginActivity : AppCompatActivity() {
         val prefs = Prefs(this)
         if (prefs.haySesionGuardada()) lanzarBiometria(prefs)
 
-        val etEmail     = findViewById<EditText>(R.id.etEmail)
-        val etPassword  = findViewById<EditText>(R.id.etPassword)
-        val btnLogin    = findViewById<Button>(R.id.btnLogin)
-        val btnRegister = findViewById<Button>(R.id.btnRegister)
-        val btnGoogle   = findViewById<Button>(R.id.btnGoogle)
-        val btnFacebook = findViewById<Button>(R.id.btnFacebook)
-        val btnAnonymous= findViewById<Button>(R.id.btnAnonymous)
-        val btnGithub   = findViewById<Button>(R.id.btnGithub)
+        val etEmail      = findViewById<EditText>(R.id.etEmail)
+        val etPassword   = findViewById<EditText>(R.id.etPassword)
+        val btnLogin     = findViewById<Button>(R.id.btnLogin)
+        val btnRegister  = findViewById<Button>(R.id.btnRegister)
+        val btnGoogle    = findViewById<Button>(R.id.btnGoogle)
+        val btnFacebook  = findViewById<Button>(R.id.btnFacebook)
+        val btnAnonymous = findViewById<Button>(R.id.btnAnonymous)
+        val btnGithub    = findViewById<Button>(R.id.btnGithub)
 
         btnLogin.setOnClickListener {
             val email    = etEmail.text.toString().trim()
@@ -109,9 +109,7 @@ class LoginActivity : AppCompatActivity() {
             auth.signInAnonymously().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
-                    crearPerfilSiNoExiste(uid, "Viajero Anónimo") {
-                        decidirDestino(uid)
-                    }
+                    crearPerfilSiNoExiste(uid, "Viajero Anónimo") { decidirDestino(uid) }
                 } else {
                     Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -119,27 +117,33 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // ─── DECISIÓN CENTRAL ────────────────────────────────────────────────────
-    // Revisa Firestore: si onboardingCompleto == true → MainActivity
-    //                   si no existe o es false     → WelcomeActivity (onboarding)
+    // ─── BUG CRÍTICO CORREGIDO ───────────────────────────────────────────────
+    // El bug original: dentro del if (onboardingCompleto) se redefinía irA()
+    // como función local en vez de llamar a la función de clase. Nunca navegaba.
     private fun decidirDestino(uid: String) {
         db.collection("users").document(uid).get()
             .addOnSuccessListener { doc ->
+                // 1. ¿Está bloqueado?
+                val bloqueada = doc.getBoolean("bloqueada") ?: false
+                if (bloqueada) {
+                    irA(LockActivity::class.java)
+                    return@addOnSuccessListener
+                }
+                // 2. ¿Completó el onboarding?
                 val onboardingCompleto = doc.getBoolean("onboardingCompleto") ?: false
                 if (onboardingCompleto) {
+                    // CORRECTO: llama a irA() de la clase, no redefine una local
+                    NotificationScheduler.programar(this)
                     irA(MainActivity::class.java)
                 } else {
                     irA(WelcomeActivity::class.java)
                 }
             }
             .addOnFailureListener {
-                // Si hay error de red, mandamos al onboarding por seguridad
                 irA(WelcomeActivity::class.java)
             }
     }
 
-    // ─── CREAR PERFIL (para login social o anónimo) ──────────────────────────
-    // Solo crea el documento si no existe; así no sobreescribe datos de usuarios existentes
     private fun crearPerfilSiNoExiste(uid: String, displayName: String, onDone: () -> Unit) {
         val ref = db.collection("users").document(uid)
         ref.get().addOnSuccessListener { doc ->
@@ -151,9 +155,13 @@ class LoginActivity : AppCompatActivity() {
                     "happiness"          to 100,
                     "mana"               to 100,
                     "level"              to 1,
-                    "onboardingCompleto" to false
+                    "onboardingCompleto" to false,
+                    "bloqueada"          to false,
+                    "metrosAcumulados"   to 0.0,
+                    "ultimoReinicio"     to ""
                 )
-                ref.set(perfil).addOnSuccessListener { onDone() }
+                ref.set(perfil)
+                    .addOnSuccessListener { onDone() }
                     .addOnFailureListener { onDone() }
             } else {
                 onDone()
@@ -161,7 +169,6 @@ class LoginActivity : AppCompatActivity() {
         }.addOnFailureListener { onDone() }
     }
 
-    // ─── LOGIN / REGISTRO EMAIL ───────────────────────────────────────────────
     private fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -181,16 +188,13 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val uid  = auth.currentUser!!.uid
                 val name = email.substringBefore("@")
-                crearPerfilSiNoExiste(uid, name) {
-                    decidirDestino(uid)
-                }
+                crearPerfilSiNoExiste(uid, name) { decidirDestino(uid) }
             } else {
                 Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // ─── SOCIAL AUTH ─────────────────────────────────────────────────────────
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
@@ -200,7 +204,7 @@ class LoginActivity : AppCompatActivity() {
                     decidirDestino(user.uid)
                 }
             } else {
-                Toast.makeText(this, "Error Google Auth", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error Google Auth: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -213,6 +217,8 @@ class LoginActivity : AppCompatActivity() {
                 crearPerfilSiNoExiste(user.uid, user.displayName ?: "Héroe") {
                     decidirDestino(user.uid)
                 }
+            } else {
+                Toast.makeText(this, "Error Facebook Auth", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -231,7 +237,6 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    // ─── BIOMETRÍA ───────────────────────────────────────────────────────────
     private fun lanzarBiometria(prefs: Prefs) {
         val biometricManager = BiometricManager.from(this)
         val authenticators   = BiometricManager.Authenticators.BIOMETRIC_STRONG or
@@ -244,7 +249,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun mostrarPromptBiometrico(prefs: Prefs) {
         val executor = ContextCompat.getMainExecutor(this)
-        val prompt   = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+        val prompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 autoLoginConCredenciales(prefs)
             }
@@ -255,8 +260,10 @@ class LoginActivity : AppCompatActivity() {
         val info = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Bienvenido de vuelta")
             .setSubtitle("Usa tu huella o reconocimiento facial")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
             .build()
         prompt.authenticate(info)
     }
@@ -274,7 +281,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // ─── UTILIDAD ────────────────────────────────────────────────────────────
     private fun irA(destino: Class<*>) {
         startActivity(Intent(this, destino))
         finish()
