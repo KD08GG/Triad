@@ -12,15 +12,15 @@ Triad es una aplicación Android que convierte tus rutinas diarias en misiones. 
 
 | Login | Onboarding | Dashboard |
 |:---:|:---:|:---:|
-| <img src="screenshots/login.png" width="200"/> | <img src="screenshots/welcome.png" width="200"/> | <img src="screenshots/home.png" width="200"/> |
+| <img src="screenshots/login.jpeg" width="200"/> | <img src="screenshots/welcome.jpeg" width="200"/> | <img src="screenshots/home.jpeg" width="200"/> |
 
 | Misiones | Tienda | Avatar |
 |:---:|:---:|:---:|
-| <img src="screenshots/tasks.png" width="200"/> | <img src="screenshots/shop.png" width="200"/> | <img src="screenshots/avatar.png" width="200"/> |
+| <img src="screenshots/tasks.jpeg" width="200"/> | <img src="screenshots/shop.jpeg" width="200"/> | <img src="screenshots/avatar.jpeg" width="200"/> |
 
 | Derrota | Bloqueo GPS |
 |:---:|:---:|
-| <img src="screenshots/defeat.png" width="200"/> | <img src="screenshots/lock.png" width="200"/> |
+| <img src="screenshots/lock.jpeg" width="200"/> |
 
 </div>
 
