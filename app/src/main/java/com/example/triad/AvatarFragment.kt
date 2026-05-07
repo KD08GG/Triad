@@ -12,11 +12,15 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class AvatarFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+
+    private var userListener:   ListenerRegistration? = null
+    private var pilarsListener: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,31 +29,30 @@ class AvatarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         db   = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        val tvName       = view.findViewById<TextView>(R.id.tvAvatarName)
-        val tvLevel      = view.findViewById<TextView>(R.id.tvAvatarLevel)
-        val tvPoints     = view.findViewById<TextView>(R.id.tvAvatarPoints)
-        val tvNextLevel  = view.findViewById<TextView>(R.id.tvNextLevel)
-        val pbXp         = view.findViewById<ProgressBar>(R.id.pbXp)
-        val pbHp         = view.findViewById<ProgressBar>(R.id.pbHp)
-        val pbHappiness  = view.findViewById<ProgressBar>(R.id.pbHappiness)
-        val pbMana       = view.findViewById<ProgressBar>(R.id.pbMana)
-        val tvHp         = view.findViewById<TextView>(R.id.tvHpValue)
-        val tvHappiness  = view.findViewById<TextView>(R.id.tvHappinessValue)
-        val tvMana       = view.findViewById<TextView>(R.id.tvManaValue)
-        val btnLogout    = view.findViewById<MaterialButton>(R.id.btnLogout)
+        val tvName      = view.findViewById<TextView>(R.id.tvAvatarName)
+        val tvLevel     = view.findViewById<TextView>(R.id.tvAvatarLevel)
+        val tvPoints    = view.findViewById<TextView>(R.id.tvAvatarPoints)
+        val tvNextLevel = view.findViewById<TextView>(R.id.tvNextLevel)
+        val pbXp        = view.findViewById<ProgressBar>(R.id.pbXp)
+        val pbCuerpo    = view.findViewById<ProgressBar>(R.id.pbCuerpo)
+        val pbAlma      = view.findViewById<ProgressBar>(R.id.pbAlma)
+        val pbEspiritu  = view.findViewById<ProgressBar>(R.id.pbEspiritu)
+        val tvCuerpo    = view.findViewById<TextView>(R.id.tvCuerpoValue)
+        val tvAlma      = view.findViewById<TextView>(R.id.tvAlmaValue)
+        val tvEspiritu  = view.findViewById<TextView>(R.id.tvEspirituValue)
+        val btnLogout   = view.findViewById<MaterialButton>(R.id.btnLogout)
 
-        cargarDatos(tvName, tvLevel, tvPoints, tvNextLevel, pbXp, pbHp, pbHappiness, pbMana, tvHp, tvHappiness, tvMana)
+        cargarDatosUsuario(tvName, tvLevel, tvPoints, tvNextLevel, pbXp)
+        cargarStatsPilares(pbCuerpo, pbAlma, pbEspiritu, tvCuerpo, tvAlma, tvEspiritu)
 
-        // Cerrar sesión con confirmación
         btnLogout.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("¿Cerrar sesión?")
-                .setMessage("Tu progreso está guardado en la nube. Puedes volver cuando quieras.")
-                .setPositiveButton("Cerrar sesión") { _, _ ->
+                .setTitle("Cerrar sesion?")
+                .setMessage("Tu progreso esta guardado en la nube.")
+                .setPositiveButton("Cerrar sesion") { _, _ ->
                     Prefs(requireContext()).wipe()
                     NotificationScheduler.cancelar(requireContext())
                     auth.signOut()
@@ -61,66 +64,71 @@ class AvatarFragment : Fragment() {
         }
     }
 
-    private fun cargarDatos(
+    override fun onDestroyView() {
+        super.onDestroyView()
+        userListener?.remove()
+        pilarsListener?.remove()
+        userListener   = null
+        pilarsListener = null
+    }
+
+    private fun cargarDatosUsuario(
         tvName: TextView, tvLevel: TextView, tvPoints: TextView,
-        tvNextLevel: TextView, pbXp: ProgressBar,
-        pbHp: ProgressBar, pbHappiness: ProgressBar, pbMana: ProgressBar,
-        tvHp: TextView, tvHappiness: TextView, tvMana: TextView
+        tvNextLevel: TextView, pbXp: ProgressBar
     ) {
         val uid = auth.currentUser?.uid ?: return
-        db.collection("users").document(uid)
+        userListener?.remove()
+        userListener = db.collection("users").document(uid)
             .addSnapshotListener { snap, _ ->
-                if (snap == null || !snap.exists()) return@addSnapshotListener
+                if (!isAdded || snap == null || !snap.exists()) return@addSnapshotListener
 
-                val name      = snap.getString("name") ?: "Héroe"
-                val points    = snap.getLong("points") ?: 0L
-                val level     = snap.getLong("level")?.toInt() ?: 1
-                val hp        = snap.getLong("hp")?.toInt() ?: 100
-                val happiness = snap.getLong("happiness")?.toInt() ?: 100
-                val mana      = snap.getLong("mana")?.toInt() ?: 100
+                val name   = snap.getString("name") ?: "Heroe"
+                val points = snap.getLong("points") ?: 0L
+                val level  = snap.getLong("level")?.toInt() ?: 1
 
-                tvName.text      = name
-                tvPoints.text    = "$points pts"
-                tvLevel.text     = "Nivel $level · ${nombreNivel(level)}"
-                tvHp.text        = "$hp / 100"
-                tvHappiness.text = "$happiness / 100"
-                tvMana.text      = "$mana / 100"
+                tvName.text   = name
+                tvPoints.text = "$points pts"
+                tvLevel.text  = "NV.$level ${GameUtils.nombreNivel(level).uppercase()}"
 
-                pbHp.progress        = hp
-                pbHappiness.progress = happiness
-                pbMana.progress      = mana
-
-                // Progreso hacia siguiente nivel
-                val (puntosActual, puntosSiguiente) = rangoPuntos(level)
-                val progreso = if (puntosSiguiente > puntosActual) {
-                    ((points - puntosActual) * 100 / (puntosSiguiente - puntosActual)).toInt().coerceIn(0, 100)
+                val (ptActual, ptSig) = GameUtils.rangoPuntos(level)
+                val progreso = if (ptSig > ptActual) {
+                    ((points - ptActual) * 100 / (ptSig - ptActual)).toInt().coerceIn(0, 100)
                 } else 100
                 pbXp.progress = progreso
 
-                val puntosRestantes = puntosSiguiente - points
-                tvNextLevel.text = if (level >= 7) "¡Nivel máximo alcanzado! 🔥"
-                else "Faltan $puntosRestantes pts para Nivel ${level + 1}"
+                tvNextLevel.text = if (level >= 7) "Nivel maximo alcanzado!"
+                else "Faltan ${ptSig - points} pts para Nivel ${level + 1}"
             }
     }
 
-    private fun nombreNivel(level: Int): String = when (level) {
-        1    -> "Aprendiz 🌱"
-        2    -> "Guerrero ⚔️"
-        3    -> "Explorador 🗺️"
-        4    -> "Guardián 🛡️"
-        5    -> "Campeón 🏆"
-        6    -> "Maestro 🌟"
-        7    -> "Legendario 🔥"
-        else -> "Héroe"
-    }
+    private fun cargarStatsPilares(
+        pbCuerpo: ProgressBar, pbAlma: ProgressBar, pbEspiritu: ProgressBar,
+        tvCuerpo: TextView, tvAlma: TextView, tvEspiritu: TextView
+    ) {
+        val uid = auth.currentUser?.uid ?: return
+        pilarsListener?.remove()
+        pilarsListener = db.collection("users").document(uid)
+            .addSnapshotListener { snap, _ ->
+                if (!isAdded || snap == null || !snap.exists()) return@addSnapshotListener
 
-    private fun rangoPuntos(level: Int): Pair<Long, Long> = when (level) {
-        1    -> Pair(0L,     500L)
-        2    -> Pair(500L,   1200L)
-        3    -> Pair(1200L,  2500L)
-        4    -> Pair(2500L,  4500L)
-        5    -> Pair(4500L,  7000L)
-        6    -> Pair(7000L,  10000L)
-        else -> Pair(10000L, 10000L)
+                val statCuerpo   = snap.getLong("statCuerpo")   ?: 0L
+                val statAlma     = snap.getLong("statAlma")     ?: 0L
+                val statEspiritu = snap.getLong("statEspiritu") ?: 0L
+                val total        = statCuerpo + statAlma + statEspiritu
+
+                if (total == 0L) {
+                    pbCuerpo.progress   = 33
+                    pbAlma.progress     = 33
+                    pbEspiritu.progress = 33
+                } else {
+                    pbCuerpo.progress   = ((statCuerpo.toFloat()   / total) * 100).toInt()
+                    pbAlma.progress     = ((statAlma.toFloat()     / total) * 100).toInt()
+                    pbEspiritu.progress = ((statEspiritu.toFloat() / total) * 100).toInt()
+                }
+
+                tvCuerpo.text   = "$statCuerpo tasks"
+                tvAlma.text     = "$statAlma tasks"
+                tvEspiritu.text = "$statEspiritu tasks"
+            }
     }
 }

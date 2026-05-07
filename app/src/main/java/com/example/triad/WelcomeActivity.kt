@@ -81,7 +81,7 @@ class WelcomeActivity : AppCompatActivity() {
                     puntos    = 25
                 )
                 listaCompleta.add(nueva)
-                adapter.notifyItemInserted(listaCompleta.size - 1)
+                adapter.notifyListChanged()
                 rvTareas.smoothScrollToPosition(listaCompleta.size - 1)
                 etCustom.text?.clear()
             } else {
@@ -112,7 +112,7 @@ class WelcomeActivity : AppCompatActivity() {
                 "completed"    to false,
                 "userId"       to userId,
                 "createdAt"    to System.currentTimeMillis(),
-                // Penalización = mitad de los puntos que vale la tarea
+                "createdDate"  to hoy,
                 "penalizacion" to (tarea.puntos / 2)
             )
             batch.set(ref, data)
@@ -137,7 +137,6 @@ class WelcomeActivity : AppCompatActivity() {
     }
 }
 
-// ─── DATA CLASS ──────────────────────────────────────────────────────────────
 data class TareaPredefinida(
     val id       : String,
     val titulo   : String,
@@ -146,7 +145,6 @@ data class TareaPredefinida(
     val puntos   : Int
 )
 
-// ─── ADAPTER con checkbox fix ─────────────────────────────────────────────────
 class WelcomeTaskAdapter(
     private val tareas: MutableList<TareaPredefinida>,
     private val onToggle: (TareaPredefinida, Boolean) -> Unit
@@ -155,7 +153,6 @@ class WelcomeTaskAdapter(
     private val seleccionadas = mutableSetOf<String>()
     private val ordenCategorias = listOf("CUERPO", "ALMA", "ESPIRITU", "DEBERES", "PERSONAL")
 
-    // Recalcula grupos dinámicamente para soportar items añadidos
     private fun calcularGrupos(): List<Pair<String?, TareaPredefinida?>> = buildList {
         ordenCategorias.forEach { cat ->
             val items = tareas.filter { it.categoria == cat }
@@ -199,7 +196,6 @@ class WelcomeTaskAdapter(
             holder.bindTask(tarea, isSelected) { selected ->
                 if (selected) seleccionadas.add(tarea.id)
                 else seleccionadas.remove(tarea.id)
-                notifyItemChanged(position)
                 onToggle(tarea, selected)
             }
         }
@@ -224,35 +220,26 @@ class WelcomeTaskAdapter(
             val tvIcono  = view.findViewById<TextView>(R.id.tvTaskIcon)
             val tvTitulo = view.findViewById<TextView>(R.id.tvTaskTitle)
             val tvPuntos = view.findViewById<TextView>(R.id.tvTaskPoints)
-            val checkbox = view.findViewById<CheckBox>(R.id.cbTask)
+            val btnCheck = view.findViewById<MaterialButton>(R.id.btnCompleteTask)
             val cardView = view.findViewById<View>(R.id.cardTask)
 
             tvIcono.text  = tarea.icono
             tvTitulo.text = tarea.titulo
             tvPuntos.text = "+${tarea.puntos} pts"
 
-            // Actualizar estado visual SIN disparar listener
-            checkbox.setOnCheckedChangeListener(null)
-            checkbox.isChecked = isSelected
-            actualizarEstiloCard(cardView, tvTitulo, tarea.categoria, isSelected)
+            actualizarEstiloCard(cardView, tvTitulo, btnCheck, tarea.categoria, isSelected)
 
             val toggle = {
-                val nuevo = !checkbox.isChecked
-                checkbox.isChecked = nuevo
-                actualizarEstiloCard(cardView, tvTitulo, tarea.categoria, nuevo)
-                onToggle(nuevo)
+                val nuevoEstado = !isSelected
+                onToggle(nuevoEstado)
+                notifyItemChanged(bindingAdapterPosition)
             }
 
-            // FIX: tanto el card como el checkbox llaman al mismo toggle
-            // El checkbox ya NO tiene clickable=false — responde directo
             cardView.setOnClickListener { toggle() }
-            checkbox.setOnCheckedChangeListener { _, isChecked ->
-                actualizarEstiloCard(cardView, tvTitulo, tarea.categoria, isChecked)
-                onToggle(isChecked)
-            }
+            btnCheck.setOnClickListener { toggle() }
         }
 
-        private fun actualizarEstiloCard(card: View, tvTitulo: TextView, cat: String, selected: Boolean) {
+        private fun actualizarEstiloCard(card: View, tvTitulo: TextView, btnCheck: MaterialButton, cat: String, selected: Boolean) {
             val colorRes = when (cat) {
                 "CUERPO"   -> R.color.cat_cuerpo
                 "ALMA"     -> R.color.cat_alma
@@ -261,9 +248,18 @@ class WelcomeTaskAdapter(
                 else       -> R.color.cat_personal
             }
             card.setBackgroundResource(if (selected) R.drawable.bg_task_selected else R.drawable.bg_task_unselected)
-            card.alpha = if (selected) 1f else 0.65f
+            
+            val ctx = card.context
+            if (selected) {
+                btnCheck.iconTint = ContextCompat.getColorStateList(ctx, colorRes)
+                btnCheck.alpha = 1f
+            } else {
+                btnCheck.iconTint = ContextCompat.getColorStateList(ctx, R.color.text_hint)
+                btnCheck.alpha = 0.3f
+            }
+            
             tvTitulo.setTextColor(
-                ContextCompat.getColor(card.context, if (selected) colorRes else R.color.text_primary)
+                ContextCompat.getColor(ctx, if (selected) colorRes else R.color.text_primary)
             )
         }
     }

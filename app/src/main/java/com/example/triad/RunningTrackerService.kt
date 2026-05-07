@@ -14,28 +14,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 // ─── BOOT RECEIVER ───────────────────────────────────────────────────────────
-// Se ejecuta cuando el teléfono se reinicia. Si el usuario estaba bloqueado
-// y había iniciado el rastreo, lo reanuda automáticamente.
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
-
-        val auth = FirebaseAuth.getInstance()
-        val uid  = auth.currentUser?.uid ?: return
-
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance()
             .collection("users").document(uid).get()
             .addOnSuccessListener { snap ->
-                val bloqueada      = snap.getBoolean("bloqueada") ?: false
-                val rastreoActivo  = snap.getBoolean("rastreoActivo") ?: false
-                if (bloqueada && rastreoActivo) {
-                    // Reiniciar el servicio después del reboot
-                    val serviceIntent = Intent(context, RunningTrackerService::class.java)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        context.startForegroundService(serviceIntent)
-                    } else {
-                        context.startService(serviceIntent)
-                    }
+                if ((snap.getBoolean("bloqueada") == true) &&
+                    (snap.getBoolean("rastreoActivo") == true)) {
+                    val si = Intent(context, RunningTrackerService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        context.startForegroundService(si)
+                    else context.startService(si)
                 }
             }
     }
@@ -49,8 +40,6 @@ class RunningTrackerService : Service() {
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    // Solo la distancia de ESTA sesión continua en memoria
-    // Si el servicio muere → onDestroy resetea → próxima sesión empieza desde 0
     private var distanciaEnMemoria = 0.0
     private var ultimaUbicacion: Location? = null
     private var sesionIniciada = false
@@ -60,9 +49,10 @@ class RunningTrackerService : Service() {
         const val NOTIF_ID     = 2001
         const val ACTION_STOP  = "com.example.triad.STOP_TRACKER"
         const val META_METROS  = 2000.0
-        private const val MIN_DISTANCIA = 8f    // metros mínimos para contar
-        private const val INTERVALO     = 3000L // ms entre lecturas GPS
-        private const val MAX_VELOCIDAD = 12f   // m/s máx realista (~43 km/h)
+        const val REWARD_PTS   = 100L   // puntos restaurados al completar los 2km
+        private const val MIN_DISTANCIA = 8f
+        private const val INTERVALO     = 3000L
+        private const val MAX_VELOCIDAD = 12f   // m/s (~43 km/h, filtro anti-trampa GPS)
     }
 
     override fun onCreate() {
@@ -73,19 +63,11 @@ class RunningTrackerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == ACTION_STOP) {
-            detener()
-            return START_NOT_STICKY
-        }
-
+        if (intent?.action == ACTION_STOP) { detener(); return START_NOT_STICKY }
         crearCanalNotificacion()
         startForeground(NOTIF_ID, construirNotificacion(0.0))
-
-        // Marcar en Firestore que el rastreo está activo (para BootReceiver)
         marcarRastreoActivo(true)
         iniciarRastreo()
-
-        // START_STICKY: el sistema reinicia el servicio si lo mata por RAM
         return START_STICKY
     }
 
@@ -100,24 +82,21 @@ class RunningTrackerService : Service() {
             override fun onLocationResult(result: LocationResult) {
                 val nueva = result.lastLocation ?: return
 
-                // Ignorar primeros 2 puntos para que GPS se estabilice
+                // Ignorar primer punto para estabilizar GPS
                 if (!sesionIniciada) {
                     ultimaUbicacion = nueva
-                    sesionIniciada = true
+                    sesionIniciada  = true
                     return
                 }
 
                 ultimaUbicacion?.let { anterior ->
                     val distancia = anterior.distanceTo(nueva)
                     val tiempoMs  = nueva.time - anterior.time
-
-                    // Filtro anti-ruido GPS:
-                    // 1. Distancia mínima real
-                    // 2. Velocidad máxima realista (anti-teletransporte GPS)
                     val velocidad = if (tiempoMs > 0) (distancia / (tiempoMs / 1000f)) else 0f
+
                     if (distancia >= MIN_DISTANCIA && velocidad <= MAX_VELOCIDAD) {
                         distanciaEnMemoria += distancia
-                        guardarEnFirestoreYVerificar()
+                        guardarYVerificar()
                         actualizarNotificacion(distanciaEnMemoria)
                     }
                 }
@@ -127,18 +106,12 @@ class RunningTrackerService : Service() {
 
         try {
             fusedLocationClient.requestLocationUpdates(
-                request,
-                locationCallback,
-                Looper.getMainLooper()
+                request, locationCallback, Looper.getMainLooper()
             )
-        } catch (e: SecurityException) {
-            detener()
-        }
+        } catch (e: SecurityException) { detener() }
     }
 
-    // Sobreescribe metros en Firestore — NO acumula entre sesiones
-    // Eso garantiza que los 2km sean CONTINUOS (sin cerrar la app)
-    private fun guardarEnFirestoreYVerificar() {
+    private fun guardarYVerificar() {
         val uid = auth.currentUser?.uid ?: return
         db.collection("users").document(uid)
             .update("metrosAcumulados", distanciaEnMemoria)
@@ -147,44 +120,51 @@ class RunningTrackerService : Service() {
             }
     }
 
+    // ── Desbloqueo: restaurar estado + +100 pts + navegar a MainActivity ─────
     private fun desbloquear(uid: String) {
         marcarRastreoActivo(false)
+
         db.runTransaction { transaction ->
             val ref    = db.collection("users").document(uid)
             val snap   = transaction.get(ref)
             val puntos = snap.getLong("points") ?: 0L
-            transaction.update(ref, "bloqueada",       false)
-            transaction.update(ref, "metrosAcumulados", 0.0)
-            transaction.update(ref, "rastreoActivo",   false)
-            transaction.update(ref, "points",          puntos + 300L)
+
+            transaction.update(ref, mapOf(
+                "bloqueada"        to false,
+                "metrosAcumulados" to 0.0,
+                "rastreoActivo"    to false,
+                "points"           to puntos + REWARD_PTS,  // +100 pts de regreso
+                "hp"               to 30L                   // HP arranca en 30, no en 0
+            ))
         }.addOnSuccessListener {
-            startActivity(Intent(this, LockActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra("desbloqueado", true)
-            })
+            // Ir directo a MainActivity (no pasar por LockActivity de nuevo)
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("desbloqueado", true)  // MainActivity mostrará toast de bienvenida
+            }
+            startActivity(intent)
             detener()
         }
     }
 
     private fun marcarRastreoActivo(activo: Boolean) {
         val uid = auth.currentUser?.uid ?: return
-        db.collection("users").document(uid)
-            .update("rastreoActivo", activo)
+        db.collection("users").document(uid).update("rastreoActivo", activo)
     }
 
-    // ─── NOTIFICACIÓN ────────────────────────────────────────────────────────
+    // ── Notificación ─────────────────────────────────────────────────────────
     private fun actualizarNotificacion(metros: Double) {
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(NOTIF_ID, construirNotificacion(metros))
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+            .notify(NOTIF_ID, construirNotificacion(metros))
     }
 
     private fun construirNotificacion(metros: Double): Notification {
-        val restante  = (META_METROS - metros).coerceAtLeast(0.0)
-        val progreso  = ((metros / META_METROS) * 100).toInt().coerceIn(0, 100)
+        val restante = (META_METROS - metros).coerceAtLeast(0.0)
+        val progreso = ((metros / META_METROS) * 100).toInt().coerceIn(0, 100)
 
-        val stopIntent = Intent(this, RunningTrackerService::class.java).apply { action = ACTION_STOP }
         val stopPending = PendingIntent.getService(
-            this, 0, stopIntent,
+            this, 0,
+            Intent(this, RunningTrackerService::class.java).apply { action = ACTION_STOP },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val openPending = PendingIntent.getActivity(
@@ -195,12 +175,12 @@ class RunningTrackerService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-            .setContentTitle("🏃 Triad — ¡Corriendo para desbloquearte!")
+            .setContentTitle("Triad — Corriendo para desbloquearte!")
             .setContentText("${"%.0f".format(metros)}m / 2000m — Faltan ${"%.0f".format(restante)}m")
             .setProgress(100, progreso, false)
             .setOngoing(true)
             .setContentIntent(openPending)
-            .addAction(android.R.drawable.ic_delete, "Cancelar sesión", stopPending)
+            .addAction(android.R.drawable.ic_delete, "Cancelar sesion", stopPending)
             .build()
     }
 
@@ -208,39 +188,31 @@ class RunningTrackerService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val canal = NotificationChannel(
                 CHANNEL_ID, "Rastreo de carrera", NotificationManager.IMPORTANCE_LOW
-            ).apply { description = "Muestra tu progreso mientras corres para desbloquear Triad" }
+            ).apply { description = "Progreso mientras corres para desbloquear Triad" }
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(canal)
         }
     }
 
     private fun detener() {
-        if (::locationCallback.isInitialized) {
+        if (::locationCallback.isInitialized)
             fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
         stopForeground(true)
         stopSelf()
     }
 
-    // ─── DESTRUCCIÓN — resetear metros para garantizar continuidad ─────────
+    // Al destruir sin completar 2km → resetear metros (garantiza continuidad)
     override fun onDestroy() {
         super.onDestroy()
-        if (::locationCallback.isInitialized) {
+        if (::locationCallback.isInitialized)
             fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-        // Si el servicio fue destruido antes de los 2km, resetear distancia
-        // Esto fuerza que la próxima sesión empiece desde 0 (continuidad)
+
         val uid = auth.currentUser?.uid
         if (uid != null && distanciaEnMemoria < META_METROS) {
             db.collection("users").document(uid)
-                .update(mapOf(
-                    "metrosAcumulados" to 0.0,
-                    "rastreoActivo"    to false
-                ))
+                .update(mapOf("metrosAcumulados" to 0.0, "rastreoActivo" to false))
         }
-        distanciaEnMemoria = 0.0
-        ultimaUbicacion    = null
-        sesionIniciada     = false
+        distanciaEnMemoria = 0.0; ultimaUbicacion = null; sesionIniciada = false
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

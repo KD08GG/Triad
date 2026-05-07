@@ -5,20 +5,12 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class DefeatActivity : AppCompatActivity() {
-
-    private lateinit var db: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_defeat)
-
-        db   = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
 
         val puntosPerdidos = intent.getIntExtra("puntos_perdidos", 0)
         val tvPerdidos     = findViewById<TextView>(R.id.tvPuntosPercidos)
@@ -28,26 +20,23 @@ class DefeatActivity : AppCompatActivity() {
         tvPerdidos.text = "-$puntosPerdidos pts"
         tvMensaje.text  = mensajeMotivacional()
 
-        // Restaurar HP a 30 para que el usuario pueda seguir jugando
-        restaurarHpMinimo()
-
+        // La restauración de puntos (300 pts) ocurre en LockActivity cuando el usuario
+        // completa el reto de correr. DefeatActivity solo muestra la pantalla informativa.
         btnContinuar.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(
+                Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+            )
             finish()
         }
     }
 
-    private fun restaurarHpMinimo() {
-        val uid = auth.currentUser?.uid ?: return
-        db.collection("users").document(uid)
-            .update("hp", 30)
-    }
-
     private fun mensajeMotivacional(): String = listOf(
-        "Todos caemos. Los héroes se levantan.",
-        "La derrota de hoy es la lección de mañana.",
+        "Todos caemos. Los heroes se levantan.",
+        "La derrota de hoy es la leccion de manana.",
         "No es el fin. Es el inicio del regreso.",
-        "Cada héroe tiene su día oscuro. Este es el tuyo.",
-        "Descansa, reagrúpate y vuelve más fuerte."
+        "Cada heroe tiene su dia oscuro. Este es el tuyo.",
+        "Descansa, reagrupate y vuelve mas fuerte."
     ).random()
 }

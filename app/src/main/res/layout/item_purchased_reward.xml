@@ -10,14 +10,13 @@
     android:padding="16dp"
     android:layout_marginBottom="10dp">
 
-    <!-- Icon -->
+    <!-- Icon bg -->
     <FrameLayout
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_marginEnd="14dp">
-
         <ImageView
-            android:id="@+id/ivShopIcon"
+            android:id="@+id/ivRewardIcon"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/circle_indicator"
@@ -35,7 +34,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvShopItemName"
+            android:id="@+id/tvRewardName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Recompensa"
@@ -44,23 +43,23 @@
             android:textColor="@color/text_primary"/>
 
         <TextView
-            android:id="@+id/tvShopItemCost"
+            android:id="@+id/tvRewardDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+50 pts"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textColor="@color/cat_alma"
+            android:text="Canjeado hoy"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/text_hint"
             android:layout_marginTop="2dp"/>
     </LinearLayout>
 
-    <!-- Buy button -->
+    <!-- Activate button (visible only in "pendientes" tab) -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBuyItem"
+        android:id="@+id/btnActivate"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
-        android:text="Canjear"
-        android:textSize="12sp"
+        android:text="ACTIVAR"
+        android:textSize="11sp"
         android:fontFamily="@font/poppins_semibold"
         android:textColor="#0F172A"
         android:insetTop="0dp"

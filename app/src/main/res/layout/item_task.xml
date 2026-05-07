@@ -1,108 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/divider"
-    app:strokeWidth="1dp">
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_surface_card"
+    android:padding="16dp"
+    android:layout_marginBottom="10dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp">
+    <!-- Pillar icon -->
+    <FrameLayout
+        android:id="@+id/iconContainer"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="14dp">
 
-        <!-- Ícono con fondo coloreado -->
-        <FrameLayout
-            android:id="@+id/iconContainer"
+        <ImageView
+            android:id="@+id/ivCategoryIcon"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:layout_marginEnd="14dp">
+            android:background="@drawable/circle_indicator"
+            android:backgroundTint="@color/cat_cuerpo_bg"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_menu_directions"
+            app:tint="@color/cat_cuerpo"/>
+    </FrameLayout>
 
-            <ImageView
-                android:id="@+id/ivCategoryIcon"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@drawable/circle_indicator"
-                android:backgroundTint="@color/cat_cuerpo"
-                android:padding="10dp"
-                android:src="@android:drawable/ic_menu_directions"
-                app:tint="@color/white"/>
-        </FrameLayout>
+    <!-- Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <!-- Info -->
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvTaskTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:text="Título de la tarea"
+            android:textSize="15sp"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="@color/text_primary"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="3dp">
 
             <TextView
-                android:id="@+id/tvTaskTitle"
+                android:id="@+id/tvTaskCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Título de la tarea"
-                android:textSize="15sp"
+                android:text="CUERPO"
+                android:textSize="10sp"
                 android:fontFamily="@font/poppins_semibold"
-                android:textColor="@color/text_primary"/>
+                android:textColor="@color/cat_cuerpo"
+                android:letterSpacing="0.08"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="2dp">
+                android:text=" · "
+                android:textSize="10sp"
+                android:textColor="@color/text_hint"/>
 
-                <TextView
-                    android:id="@+id/tvTaskCategory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CUERPO"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textColor="@color/text_hint"
-                    android:letterSpacing="0.08"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" · "
-                    android:textSize="10sp"
-                    android:textColor="@color/text_hint"/>
-
-                <TextView
-                    android:id="@+id/tvTaskPoints"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+50 pts"
-                    android:textSize="11sp"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textColor="@color/primary"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tvTaskPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+50 pts"
+                android:textSize="11sp"
+                android:fontFamily="@font/poppins_semibold"
+                android:textColor="@color/primary"/>
         </LinearLayout>
-
-        <!-- Botón completar -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCompleteTask"
-            style="@style/Widget.MaterialComponents.Button.Icon"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/ic_check_circle"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconTint="@color/primary_light"
-            app:backgroundTint="@color/primary_surface"
-            app:cornerRadius="22dp"/>
-
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <!-- Botón Editar (Lápiz) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEditTask"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        app:icon="@android:drawable/ic_menu_edit"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="@color/text_secondary"
+        app:backgroundTint="@android:color/transparent"
+        app:cornerRadius="20dp"
+        android:layout_marginEnd="4dp"/>
+
+    <!-- Checkbox completar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCompleteTask"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        app:icon="@drawable/ic_check_circle"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="@color/primary"
+        app:backgroundTint="@color/primary_surface"
+        app:cornerRadius="20dp"/>
+
+</LinearLayout>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header con avatar -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:paddingBottom="28dp"
             android:paddingHorizontal="24dp">
 
-            <!-- Avatar círculo -->
+            <!-- Avatar -->
             <FrameLayout
                 android:layout_width="88dp"
                 android:layout_height="88dp"
@@ -32,8 +32,10 @@
                 <TextView
                     android:layout_width="88dp"
                     android:layout_height="88dp"
-                    android:text=" "
-                    android:textSize="42sp"
+                    android:text="H"
+                    android:textSize="36sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@color/primary"
                     android:gravity="center"
                     android:background="@drawable/bg_avatar_circle"/>
             </FrameLayout>
@@ -42,20 +44,30 @@
                 android:id="@+id/tvAvatarName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Héroe"
+                android:text="Heroe"
                 android:textSize="24sp"
-                android:fontFamily="@font/poppins_bold"
+                android:fontFamily="@font/poppins_semibold"
                 android:textColor="@color/text_primary"
-                android:layout_marginBottom="2dp"/>
+                android:layout_marginBottom="6dp"/>
 
-            <TextView
-                android:id="@+id/tvAvatarLevel"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nivel 1 · Aprendiz 🌱"
-                android:textSize="13sp"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/primary"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_level_badge"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp">
+
+                <TextView
+                    android:id="@+id/tvAvatarLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NV. 1 - APRENDIZ"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/primary"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -64,195 +76,182 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Card puntos + XP -->
-            <androidx.cardview.widget.CardView
+            <!-- XP Progress card -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
-                app:strokeWidth="1dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_surface_card"
+                android:padding="20dp"
                 android:layout_marginBottom="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="14dp">
+                        android:layout_weight="1"
+                        android:text="Stacked Coins"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/text_secondary"/>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Mis puntos"
-                            android:textSize="13sp"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="@color/text_secondary"/>
-
-                        <TextView
-                            android:id="@+id/tvAvatarPoints"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0 pts"
-                            android:textSize="22sp"
-                            android:fontFamily="@font/poppins_bold"
-                            android:textColor="@color/primary"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tvAvatarPoints"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="6dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Siguiente nivel"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/text_hint"/>
-
-                        <TextView
-                            android:id="@+id/tvNextLevel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Faltan 500 pts"
-                            android:textSize="11sp"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="@color/cat_alma"/>
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/pbXp"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:progress="0"
-                        android:max="100"
-                        android:progressTint="@color/cat_alma"
-                        android:progressBackgroundTint="@color/cat_alma_bg"/>
-
+                        android:text="0 pts"
+                        android:textSize="24sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@color/cat_alma"/>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Card stats vitales -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
-                app:strokeWidth="1dp"
-                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
 
                     <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Siguiente nivel"
+                        android:textSize="11sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/text_hint"/>
+
+                    <TextView
+                        android:id="@+id/tvNextLevel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Stats vitales"
-                        android:textSize="14sp"
+                        android:text="Faltan 500 pts"
+                        android:textSize="11sp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- HP -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:orientation="horizontal" android:gravity="center_vertical"
-                        android:layout_marginBottom="14dp">
-                        <TextView android:layout_width="24dp" android:layout_height="wrap_content"
-                            android:text="❤️" android:textSize="16sp"/>
-                        <TextView android:layout_width="70dp" android:layout_height="wrap_content"
-                            android:text="HP" android:textSize="13sp"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="@color/cat_cuerpo" android:layout_marginStart="8dp"/>
-                        <ProgressBar android:id="@+id/pbHp"
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="0dp" android:layout_height="8dp" android:layout_weight="1"
-                            android:progressTint="@color/cat_cuerpo"
-                            android:progressBackgroundTint="@color/cat_cuerpo_bg"/>
-                        <TextView android:id="@+id/tvHpValue" android:layout_width="52dp"
-                            android:layout_height="wrap_content" android:text="100/100"
-                            android:textSize="11sp" android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/text_hint" android:gravity="end"
-                            android:layout_marginStart="8dp"/>
-                    </LinearLayout>
-
-                    <!-- Alma -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:orientation="horizontal" android:gravity="center_vertical"
-                        android:layout_marginBottom="14dp">
-                        <TextView android:layout_width="24dp" android:layout_height="wrap_content"
-                            android:text="😊" android:textSize="16sp"/>
-                        <TextView android:layout_width="70dp" android:layout_height="wrap_content"
-                            android:text="Alma" android:textSize="13sp"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="@color/cat_alma" android:layout_marginStart="8dp"/>
-                        <ProgressBar android:id="@+id/pbHappiness"
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="0dp" android:layout_height="8dp" android:layout_weight="1"
-                            android:progressTint="@color/cat_alma"
-                            android:progressBackgroundTint="@color/cat_alma_bg"/>
-                        <TextView android:id="@+id/tvHappinessValue" android:layout_width="52dp"
-                            android:layout_height="wrap_content" android:text="100/100"
-                            android:textSize="11sp" android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/text_hint" android:gravity="end"
-                            android:layout_marginStart="8dp"/>
-                    </LinearLayout>
-
-                    <!-- Espíritu -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:orientation="horizontal" android:gravity="center_vertical">
-                        <TextView android:layout_width="24dp" android:layout_height="wrap_content"
-                            android:text="🔮" android:textSize="16sp"/>
-                        <TextView android:layout_width="70dp" android:layout_height="wrap_content"
-                            android:text="Espíritu" android:textSize="13sp"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textColor="@color/cat_espiritu" android:layout_marginStart="8dp"/>
-                        <ProgressBar android:id="@+id/pbMana"
-                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                            android:layout_width="0dp" android:layout_height="8dp" android:layout_weight="1"
-                            android:progressTint="@color/cat_espiritu"
-                            android:progressBackgroundTint="@color/cat_espiritu_bg"/>
-                        <TextView android:id="@+id/tvManaValue" android:layout_width="52dp"
-                            android:layout_height="wrap_content" android:text="100/100"
-                            android:textSize="11sp" android:fontFamily="@font/poppins_regular"
-                            android:textColor="@color/text_hint" android:gravity="end"
-                            android:layout_marginStart="8dp"/>
-                    </LinearLayout>
-
+                        android:textColor="@color/primary"/>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <!-- Cerrar sesión -->
+                <ProgressBar
+                    android:id="@+id/pbXp"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:progress="0"
+                    android:max="100"
+                    android:progressTint="@color/primary"
+                    android:progressBackgroundTint="@color/primary_surface"/>
+            </LinearLayout>
+
+            <!-- Stats Pilares card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_surface_card"
+                android:padding="20dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Progreso de Pilares"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Cuerpo -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+                    <View android:layout_width="12dp" android:layout_height="12dp"
+                        android:background="@drawable/circle_indicator"
+                        android:backgroundTint="@color/cat_cuerpo"
+                        android:layout_marginEnd="10dp"/>
+                    <TextView android:layout_width="64dp" android:layout_height="wrap_content"
+                        android:text="Cuerpo" android:textSize="13sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/cat_cuerpo"/>
+                    <ProgressBar android:id="@+id/pbCuerpo"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1"
+                        android:progressTint="@color/cat_cuerpo"
+                        android:progressBackgroundTint="@color/cat_cuerpo_bg"/>
+                    <TextView android:id="@+id/tvCuerpoValue" android:layout_width="52dp"
+                        android:layout_height="wrap_content" android:text="0 tasks"
+                        android:textSize="11sp" android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/text_hint" android:gravity="end"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Alma -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+                    <View android:layout_width="12dp" android:layout_height="12dp"
+                        android:background="@drawable/circle_indicator"
+                        android:backgroundTint="@color/cat_alma"
+                        android:layout_marginEnd="10dp"/>
+                    <TextView android:layout_width="64dp" android:layout_height="wrap_content"
+                        android:text="Alma" android:textSize="13sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/cat_alma"/>
+                    <ProgressBar android:id="@+id/pbAlma"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1"
+                        android:progressTint="@color/cat_alma"
+                        android:progressBackgroundTint="@color/cat_alma_bg"/>
+                    <TextView android:id="@+id/tvAlmaValue" android:layout_width="52dp"
+                        android:layout_height="wrap_content" android:text="0 tasks"
+                        android:textSize="11sp" android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/text_hint" android:gravity="end"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Espiritu -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <View android:layout_width="12dp" android:layout_height="12dp"
+                        android:background="@drawable/circle_indicator"
+                        android:backgroundTint="@color/cat_espiritu"
+                        android:layout_marginEnd="10dp"/>
+                    <TextView android:layout_width="64dp" android:layout_height="wrap_content"
+                        android:text="Espíritu" android:textSize="13sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/cat_espiritu"/>
+                    <ProgressBar android:id="@+id/pbEspiritu"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1"
+                        android:progressTint="@color/cat_espiritu"
+                        android:progressBackgroundTint="@color/cat_espiritu_bg"/>
+                    <TextView android:id="@+id/tvEspirituValue" android:layout_width="52dp"
+                        android:layout_height="wrap_content" android:text="0 tasks"
+                        android:textSize="11sp" android:fontFamily="@font/poppins_regular"
+                        android:textColor="@color/text_hint" android:gravity="end"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Cerrar sesion -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:text="Cerrar sesión"
+                android:text="Cerrar sesion"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_semibold"
                 android:textColor="@color/danger"
                 app:strokeColor="@color/danger"
-                app:strokeWidth="1.5dp"
+                app:strokeWidth="1dp"
                 app:backgroundTint="@color/danger_surface"
-                app:cornerRadius="26dp"
+                app:cornerRadius="16dp"
                 android:layout_marginBottom="100dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 

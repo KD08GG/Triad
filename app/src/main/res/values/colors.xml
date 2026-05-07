@@ -1,48 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fondos principales — blancos y muy claros -->
-    <color name="background">#F8F7FF</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="surface_card">#FFFFFF</color>
-    <color name="surface_selected">#EEF0FF</color>
-    <color name="divider">#E8E6F0</color>
+    <!-- === TRIAD DARK DESIGN SYSTEM v2.0 === -->
 
-    <!-- Primarios — lavanda/púrpura suave -->
-    <color name="primary">#7B6FE8</color>
-    <color name="primary_light">#A89EF5</color>
-    <color name="primary_dark">#5A4FCC</color>
-    <color name="primary_surface">#EEF0FF</color>
+    <!-- Base backgrounds -->
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="surface_card">#1E293B</color>
+    <color name="surface_elevated">#243347</color>
+    <color name="surface_selected">#2DD4BF1A</color>
+    <color name="divider">#334155</color>
 
-    <!-- Acento rosa -->
-    <color name="accent_pink">#F0A8C8</color>
-    <color name="accent_pink_light">#FDE8F2</color>
+    <!-- Primary action: Teal -->
+    <color name="primary">#2DD4BF</color>
+    <color name="primary_light">#5EEAD4</color>
+    <color name="primary_dark">#0D9488</color>
+    <color name="primary_surface">#2DD4BF1A</color>
 
-    <!-- Acento azul -->
-    <color name="accent_blue">#8EC5FC</color>
-    <color name="accent_blue_light">#E8F4FE</color>
+    <!-- Pillar Colors — Pastels on Dark -->
+    <!-- Cuerpo (Body/Strength) -->
+    <color name="cat_cuerpo">#FDA4AF</color>
+    <color name="cat_cuerpo_bg">#FDA4AF1A</color>
+    <!-- Alma (Soul/Social) -->
+    <color name="cat_alma">#FDBA74</color>
+    <color name="cat_alma_bg">#FDBA741A</color>
+    <!-- Espiritu (Mind/Spirit) -->
+    <color name="cat_espiritu">#C4B5FD</color>
+    <color name="cat_espiritu_bg">#C4B5FD1A</color>
 
-    <!-- Texto -->
-    <color name="text_primary">#2D2B45</color>
-    <color name="text_secondary">#8C8AA8</color>
-    <color name="text_hint">#B8B6CC</color>
+    <!-- HP/Danger system -->
+    <color name="hp_color">#FCA5A5</color>
+    <color name="hp_bg">#FCA5A51A</color>
+    <color name="danger">#EF4444</color>
+    <color name="danger_dark">#7F1D1D</color>
+    <color name="danger_surface">#EF44441A</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_surface">#F59E0B1A</color>
+
+    <!-- Text -->
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_hint">#64748B</color>
     <color name="white">#FFFFFF</color>
 
-    <!-- Categorías de tareas — pastel suave -->
-    <color name="cat_cuerpo">#FF8FAB</color>
-    <color name="cat_cuerpo_bg">#FFF0F3</color>
-    <color name="cat_alma">#F9C74F</color>
-    <color name="cat_alma_bg">#FFFBEC</color>
-    <color name="cat_espiritu">#A89EF5</color>
-    <color name="cat_espiritu_bg">#F3F1FF</color>
-    <color name="cat_deberes">#7FD4B4</color>
-    <color name="cat_deberes_bg">#EDFAF4</color>
-    <color name="cat_personal">#8EC5FC</color>
-    <color name="cat_personal_bg">#EBF5FF</color>
+    <!-- Nav -->
+    <color name="nav_inactive">#475569</color>
+    <color name="nav_background">#0F172A</color>
 
-    <!-- Estado danger -->
-    <color name="danger">#FF6B6B</color>
-    <color name="danger_surface">#FFF0F0</color>
-
-    <!-- Bottom nav -->
-    <color name="nav_inactive">#C4C2D8</color>
+    <!-- Legacy aliases (keep for compatibility) -->
+    <color name="primary_dark_compat">#0D9488</color>
+    <color name="accent_pink">#FDA4AF</color>
+    <color name="accent_pink_light">#FDA4AF1A</color>
+    <color name="accent_blue">#2DD4BF</color>
+    <color name="accent_blue_light">#2DD4BF1A</color>
+    <color name="cat_deberes">#2DD4BF</color>
+    <color name="cat_deberes_bg">#2DD4BF1A</color>
+    <color name="cat_personal">#C4B5FD</color>
+    <color name="cat_personal_bg">#C4B5FD1A</color>
 </resources>
